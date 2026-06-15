@@ -1,5 +1,15 @@
 <div align="center">
 <img width="500" height="1000" alt="screenshots" src="images/scc1.jpeg" />
+ 
+ # well tired of ads from other streaming platforms?
+# Try harmonic an open source streaming platform that lets yo stream music from any platform without ads
+
+Harmonic 🎵
+
+Harmonic is a modern, open-source music streaming application designed to deliver a seamless and immersive listening experience. Built with performance, scalability, and user experience in mind, Harmonic allows users to discover, stream, organize, and enjoy their favorite music from a clean and intuitive interface.
+
+Whether you're a developer looking to contribute or a music enthusiast exploring open-source alternatives, Harmonic aims to provide a powerful and customizable music platform for everyone.
+
 <img width="500" height="1000" alt="screenshots" src="images/scc2.jpeg" />
  
 </div>
@@ -18,14 +28,7 @@
   }
 </style>
 
-# well tired of ads from other streaming platforms?
-# Try harmonic an open source streaming platform that lets yo stream music from any platform without ads
 
-Harmonic 🎵
-
-Harmonic is a modern, open-source music streaming application designed to deliver a seamless and immersive listening experience. Built with performance, scalability, and user experience in mind, Harmonic allows users to discover, stream, organize, and enjoy their favorite music from a clean and intuitive interface.
-
-Whether you're a developer looking to contribute or a music enthusiast exploring open-source alternatives, Harmonic aims to provide a powerful and customizable music platform for everyone.
 
 -> Features
 -> High-quality music streaming
