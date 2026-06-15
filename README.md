@@ -71,15 +71,19 @@ Harmonic is a modern open-source music streaming platform designed to provide a 
 
 # 📸 Preview
 
-<div align="center">
+<table>
+  <tr>
+    <td>
+      <img src="images/scc1.jpeg" alt="Image 1" width="100%">
+    </td>
+    <td>
+      <img src="images/scc2.jpeg" alt="Image 2" width="100%">
+    </td>
+  </tr>
+</table>
 
-<img width="200" height="400" src="images/scc1.jpeg"/>
 
-<br><br>
 
-<img width="200" height="400" src="images/scc2.jpeg"/>
-
-</div>
 
 ---
 
