@@ -2,6 +2,8 @@ package com.example.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -121,6 +123,7 @@ fun HomeScreen(
     val isSmartCurating by viewModel.isSmartCurating.collectAsState()
     val forceOfflineMode by viewModel.forceOfflineMode.collectAsState()
     val currentUser by viewModel.currentUser.collectAsState()
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
     
     val focusManager = LocalFocusManager.current
     var showCreatePlaylistDialog by remember { mutableStateOf(false) }
@@ -138,11 +141,17 @@ fun HomeScreen(
     var selectedHeaderNav by remember { mutableStateOf("All") }
 
     val isOnline = viewModel.isNetworkAvailable()
+    
+    // Core brand theme tokens for the high fidelity dark/light alignment
+    val adaptiveBgColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFFEF7FF)
+    val adaptiveContainerBgColor = if (isDarkMode) Color(0xFF1C1B1F) else Color(0xFFF3EDF7)
+    val adaptiveTextPrimaryColor = if (isDarkMode) Color.White else Color(0xFF1D1B20)
+    val adaptiveTextSecondaryColor = if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFEF7FF))
+            .background(adaptiveBgColor)
     ) {
         // High-fidelity App Header and nav row selector
         Column(
@@ -168,21 +177,21 @@ fun HomeScreen(
                             modifier = Modifier
                                 .height(36.dp)
                                 .clip(CircleShape)
-                                .background(if (isSelected) activeColor else Color(0xFFF3EDF7))
+                                .background(if (isSelected) activeColor else adaptiveContainerBgColor)
                                 .clickable { selectedHeaderNav = nav }
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = nav,
-                                color = if (isSelected) Color.White else Color(0xFF49454F),
+                                color = if (isSelected) Color.White else adaptiveTextSecondaryColor,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                     }
                 }
-
+ 
                 // Profile picture icon on the right corner
                 AsyncImage(
                     model = currentUser?.avatarUrl ?: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80",
@@ -195,14 +204,14 @@ fun HomeScreen(
                         .testTag("profile_picture_icon")
                 )
             }
-
+ 
             // Apple Music styled segmented tab selector
             if (selectedHeaderNav == "All") {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFFF3EDF7))
+                        .background(adaptiveContainerBgColor)
                         .padding(4.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -225,7 +234,7 @@ fun HomeScreen(
                                     MainTab.LIBRARY -> "Library"
                                     MainTab.PROFILE -> "Profile"
                                 },
-                                color = if (isActive) Color.White else Color(0xFF49454F),
+                                color = if (isActive) Color.White else adaptiveTextSecondaryColor,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -695,20 +704,26 @@ fun HomeScreen(
 
         // --- TAB 4: PROFILE ---
         if (activeTab == MainTab.PROFILE) {
+            val containerBg = if (isDarkMode) Color(0xFF1C1B1F) else Color(0xFFF3EDF7)
+            val textPrimary = if (isDarkMode) Color.White else Color(0xFF1D1B20)
+            val textSecondary = if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
+            val activeAccent = safeColorParse(selectedAccentColor)
+
             item {
-                Column {
+                Column(modifier = Modifier.padding(top = 8.dp)) {
                     Text(
                         text = "CONTRIBUTOR ACCOUNT",
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = safeColorParse(selectedAccentColor),
-                        letterSpacing = 1.sp
+                        fontWeight = FontWeight.ExtraBold,
+                        color = activeAccent,
+                        letterSpacing = 1.5.sp
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Your Profile",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1D1B20)
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Black,
+                        color = textPrimary
                     )
                 }
             }
@@ -716,30 +731,51 @@ fun HomeScreen(
             // Beautiful profile card with interactive account values and nickname editing options
             item {
                 Card(
-                    modifier = Modifier.fillMaxWidth().testTag("profile_status_card"),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp,
+                            color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                            shape = RoundedCornerShape(24.dp)
+                        )
+                        .testTag("profile_status_card"),
                     shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF3EDF7))
+                    colors = CardDefaults.cardColors(containerColor = containerBg),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
+                            // Bordered Glowing avatar representation
                             Box(
                                 modifier = Modifier
-                                    .size(72.dp)
+                                    .size(80.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        Brush.radialGradient(
-                                            colors = listOf(
-                                                safeColorParse(selectedAccentColor),
-                                                Color(0xFF1D1B20)
-                                            )
+                                        Brush.linearGradient(
+                                            colors = listOf(activeAccent, activeAccent.copy(alpha = 0.4f))
                                         )
-                                    ),
-                                contentAlignment = Alignment.Center
+                                    )
+                                    .padding(3.dp)
                             ) {
-                                Text(if (currentUser != null) "✨" else "🎧", fontSize = 32.sp)
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(CircleShape)
+                                        .background(if (isDarkMode) Color(0xFF121212) else Color.White),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (currentUser != null) "✨" else "🎧",
+                                        fontSize = 36.sp
+                                    )
+                                }
                             }
 
                             Column(modifier = Modifier.weight(1f)) {
@@ -754,11 +790,13 @@ fun HomeScreen(
                                                 value = profileNickname,
                                                 onValueChange = { profileNickname = it },
                                                 colors = OutlinedTextFieldDefaults.colors(
-                                                    focusedContainerColor = Color.White,
-                                                    unfocusedContainerColor = Color.White,
-                                                    focusedBorderColor = safeColorParse(selectedAccentColor)
+                                                    focusedTextColor = textPrimary,
+                                                    unfocusedTextColor = textPrimary,
+                                                    focusedContainerColor = if (isDarkMode) Color(0xFF121212) else Color.White,
+                                                    unfocusedContainerColor = if (isDarkMode) Color(0xFF121212) else Color.White,
+                                                    focusedBorderColor = activeAccent
                                                 ),
-                                                shape = RoundedCornerShape(8.dp),
+                                                shape = RoundedCornerShape(12.dp),
                                                 modifier = Modifier.weight(1f).height(48.dp),
                                                 singleLine = true
                                             )
@@ -780,8 +818,10 @@ fun HomeScreen(
                                             Text(
                                                 text = currentProfile.username,
                                                 fontSize = 22.sp,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                color = Color(0xFF1D1B20)
+                                                fontWeight = FontWeight.Black,
+                                                color = textPrimary,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
                                             )
                                             IconButton(
                                                 onClick = { 
@@ -790,67 +830,82 @@ fun HomeScreen(
                                                 },
                                                 modifier = Modifier.size(24.dp)
                                             ) {
-                                                Icon(Icons.Default.Edit, contentDescription = "Edit name", tint = Color(0xFF49454F), modifier = Modifier.size(16.dp))
+                                                Icon(
+                                                    imageVector = Icons.Default.Edit,
+                                                    contentDescription = "Edit name",
+                                                    tint = activeAccent,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
                                             }
                                         }
                                     }
                                     
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = currentProfile.email,
-                                        fontSize = 11.sp,
-                                        color = Color(0xFF49454F)
+                                        fontSize = 12.sp,
+                                        color = textSecondary,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 } else {
                                     Text(
                                         text = "Guest Listener",
                                         fontSize = 22.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = Color(0xFF1D1B20)
+                                        fontWeight = FontWeight.Black,
+                                        color = textPrimary
                                     )
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = "Not logged in",
-                                        fontSize = 11.sp,
-                                        color = Color(0xFF49454F)
+                                        fontSize = 12.sp,
+                                        color = textSecondary
                                     )
                                 }
                             }
                         }
 
-                        HorizontalDivider(color = Color(0xFFCAC4D0))
+                        HorizontalDivider(color = if (isDarkMode) Color.White.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.08f))
 
-                        // High density stats indicators
+                        // Premium stats panel block grid
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column {
-                                Text("38.4 hrs", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1D1B20))
-                                Text("Listening time", fontSize = 10.sp, color = Color(0xFF49454F))
+                                Text("38.4 hrs", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                Text("Listening time", fontSize = 11.sp, color = textSecondary)
                             }
                             Column {
-                                Text("Synthwave", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1D1B20))
-                                Text("Primary Genre", fontSize = 10.sp, color = Color(0xFF49454F))
+                                Text("Synthwave", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                                Text("Primary Genre", fontSize = 11.sp, color = textSecondary)
                             }
                             Column(horizontalAlignment = Alignment.End) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                ) {
                                     Text("12 Days", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFA243C))
                                     Text("🔥", fontSize = 14.sp)
                                 }
-                                Text("Active Streak", fontSize = 10.sp, color = Color(0xFF49454F))
+                                Text("Active Streak", fontSize = 11.sp, color = textSecondary)
                             }
                         }
 
-                        HorizontalDivider(color = Color(0xFFCAC4D0))
+                        HorizontalDivider(color = if (isDarkMode) Color.White.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.08f))
 
                         if (currentUser != null) {
                             Button(
                                 onClick = { viewModel.logoutUser() },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White,
+                                    containerColor = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.White,
                                     contentColor = Color(0xFFFA243C)
                                 ),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth().testTag("profile_logout_button")
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .testTag("profile_logout_button")
                             ) {
                                 Text("Log Out Account", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             }
@@ -858,11 +913,14 @@ fun HomeScreen(
                             Button(
                                 onClick = onAuthClick,
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = safeColorParse(selectedAccentColor),
+                                    containerColor = activeAccent,
                                     contentColor = Color.White
                                 ),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.fillMaxWidth().testTag("profile_login_button")
+                                shape = RoundedCornerShape(14.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .testTag("profile_login_button")
                             ) {
                                 Text("Log In or Sign Up", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             }
@@ -874,25 +932,29 @@ fun HomeScreen(
             // Theme visual color customizations
             item {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().border(
+                        width = 1.dp,
+                        color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                        shape = RoundedCornerShape(20.dp)
+                    ),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF3EDF7))
+                    colors = CardDefaults.cardColors(containerColor = containerBg)
                 ) {
                     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         Text(
                             text = "Primary Accent Palette",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1D1B20)
+                            color = textPrimary
                         )
                         Text(
-                            text = "Modify active accents applied to key elements across the tabs in real time.",
+                            text = "Modify active accents applied across tabs in real time.",
                             fontSize = 11.sp,
-                            color = Color(0xFF49454F)
+                            color = textSecondary
                         )
                         
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
                             modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
                         ) {
                             val accentPalettes = listOf(
@@ -924,31 +986,58 @@ fun HomeScreen(
                 }
             }
 
-            // App simulation toggles
+            // App & Preference settings with Dark Theme Mode & simulated Offline Mode toggles
             item {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().border(
+                        width = 1.dp,
+                        color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                        shape = RoundedCornerShape(20.dp)
+                    ),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF3EDF7))
+                    colors = CardDefaults.cardColors(containerColor = containerBg)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(text = "App Environment Settings", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1D1B20))
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        Text(text = "App Environment Settings", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textPrimary)
                         
+                        // Dark Theme Mode Row
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text("Simulated Offline Mode", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF1D1B20))
-                                Text("Forces application to run off downloaded and database cached files only.", fontSize = 10.sp, color = Color(0xFF49454F))
+                                Text("Dark Theme Mode", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                Text("Enforces premium dark canvas layouts across the visual views.", fontSize = 10.sp, color = textSecondary)
+                            }
+                            Switch(
+                                checked = isDarkMode,
+                                onCheckedChange = { viewModel.toggleDarkMode(it) },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = activeAccent
+                                )
+                            )
+                        }
+
+                        HorizontalDivider(color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f))
+
+                        // Offline Mode Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("Simulated Offline Mode", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = textPrimary)
+                                Text("Forces application to run off downloaded and database cached files only.", fontSize = 10.sp, color = textSecondary)
                             }
                             Switch(
                                 checked = forceOfflineMode,
                                 onCheckedChange = { viewModel.toggleForceOfflineMode() },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = Color.White,
-                                    checkedTrackColor = Color(android.graphics.Color.parseColor(selectedAccentColor))
+                                    checkedTrackColor = activeAccent
                                 )
                             )
                         }

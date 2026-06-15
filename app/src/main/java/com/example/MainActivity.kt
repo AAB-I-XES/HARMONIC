@@ -58,17 +58,17 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            MyApplicationTheme {
-                MainAppContainer()
+            val viewModel: MusicViewModel = viewModel()
+            val isDarkMode by viewModel.isDarkMode.collectAsState()
+            MyApplicationTheme(darkTheme = isDarkMode) {
+                MainAppContainer(viewModel = viewModel)
             }
         }
     }
 }
 
 @Composable
-fun MainAppContainer() {
-    val viewModel: MusicViewModel = viewModel()
-    
+fun MainAppContainer(viewModel: MusicViewModel = viewModel()) {
     var currentScreen by remember { mutableStateOf(MusicScreen.HOME) }
     var isExpandedPlayerVisible by remember { mutableStateOf(false) }
     
@@ -79,7 +79,7 @@ fun MainAppContainer() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFEF7FF)) // High Density Light base
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Core View Switcher Frame
         Scaffold(

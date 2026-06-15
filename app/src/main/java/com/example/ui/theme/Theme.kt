@@ -12,14 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = HighDensitySecondary,
-    secondary = HighDensityAccentLight,
-    background = HighDensityOnBackground,
-    surface = HighDensityMiniPlayer,
-    onPrimary = HighDensityMiniPlayer,
-    onSecondary = Color.White,
-    onBackground = Color.White,
-    onSurface = Color.White
+    primary = Color(0xFFD0BCFF),
+    secondary = Color(0xFFCCC2DC),
+    background = Color(0xFF121212),
+    surface = Color(0xFF1C1B1F),
+    onPrimary = Color(0xFF381E72),
+    onSecondary = Color(0xFF332D41),
+    onBackground = Color(0xFFE6E1E5),
+    onSurface = Color(0xFFE6E1E5)
 )
 
 private val LightColorScheme = lightColorScheme(

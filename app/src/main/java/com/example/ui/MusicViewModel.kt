@@ -41,8 +41,21 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun logoutUser() {
-        sharedPrefs.edit().clear().apply()
+        // Clear auth but keep preferences like dark mode
+        sharedPrefs.edit()
+            .remove("user_email")
+            .remove("user_username")
+            .apply()
         _currentUser.value = null
+    }
+
+    // Dark Theme preference StateFlow
+    private val _isDarkMode = MutableStateFlow(sharedPrefs.getBoolean("dark_mode_enabled", false))
+    val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
+
+    fun toggleDarkMode(enabled: Boolean) {
+        sharedPrefs.edit().putBoolean("dark_mode_enabled", enabled).apply()
+        _isDarkMode.value = enabled
     }
 
     // Online search status

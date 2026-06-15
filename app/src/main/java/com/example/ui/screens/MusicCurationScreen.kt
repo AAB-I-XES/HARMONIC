@@ -38,8 +38,10 @@ fun MusicCurationScreen(
     val searchResults by viewModel.searchResults.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isLoadingSongs by viewModel.isLoadingSongs.collectAsState()
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
     
     val accentColor = safeColorParse(selectedAccentColor)
+    val adaptiveBgColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFFEF7FF)
     var selectedGenre by remember { mutableStateOf("All") }
 
     val genres = listOf(
@@ -74,7 +76,7 @@ fun MusicCurationScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFEF7FF)),
+            .background(adaptiveBgColor),
         contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp)
     ) {
         // Horizontal genre pills selection

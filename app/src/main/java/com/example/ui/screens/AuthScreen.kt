@@ -1,10 +1,14 @@
 package com.example.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -39,6 +44,8 @@ fun AuthScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
+    
     var isLoginMode by remember { mutableStateOf(true) }
     var emailInput by remember { mutableStateOf("") }
     var usernameInput by remember { mutableStateOf("") }
@@ -50,19 +57,33 @@ fun AuthScreen(
     
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
-    
-    // Colorful, rich dynamic gradient background matching Spotify curated or Apple Music ambient dark
-    val bgGradient = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1F1C2C),
-            Color(0xFF928DAB)
-        )
+
+    // Premium styling parameters adapting to current dark/light state
+    val accentColor = MaterialTheme.colorScheme.primary
+    val surfaceContainerColor = if (isDarkMode) Color(0xFF1E1C24) else Color(0xFFF3EDF7)
+    val inputBgColor = if (isDarkMode) Color(0xFF121118) else Color.White
+    val textPrimaryColor = if (isDarkMode) Color.White else Color(0xFF1D1B20)
+    val textSecondaryColor = if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
+
+    // Glowing themed background
+    val ambientGradient = Brush.verticalGradient(
+        colors = if (isDarkMode) {
+            listOf(
+                accentColor.copy(alpha = 0.25f),
+                Color(0xFF0F0E13)
+            )
+        } else {
+            listOf(
+                accentColor.copy(alpha = 0.15f),
+                Color(0xFFFEF7FF)
+            )
+        }
     )
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(bgGradient)
+            .background(ambientGradient)
     ) {
         Column(
             modifier = Modifier
@@ -70,7 +91,7 @@ fun AuthScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Elegant standard navigation bar on top
+            // High-fidelity header toolbar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -80,79 +101,123 @@ fun AuthScreen(
                 IconButton(
                     onClick = onBackClick,
                     modifier = Modifier
-                        .background(Color.White.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                        .background(
+                            if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                            RoundedCornerShape(12.dp)
+                        )
                         .size(40.dp)
                         .testTag("auth_back_button")
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Go back",
-                        tint = Color.White
+                        tint = textPrimaryColor
                     )
                 }
-                
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(0.2f))
 
-            // Sub-branding or Logo Representation
-            Text(
-                text = "🎵",
-                fontSize = 48.sp,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
+            // Brand Premium Identity Icon (Glowing Waveforms style shell)
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(accentColor, accentColor.copy(alpha = 0.6f))
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                // Musical note stylized presentation
+                Row(
+                    modifier = Modifier.height(36.dp),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    listOf(0.4f, 0.9f, 0.6f, 0.3f, 0.8f).forEach { scale ->
+                        Box(
+                            modifier = Modifier
+                                .width(4.dp)
+                                .fillMaxHeight(scale)
+                                .clip(CircleShape)
+                                .background(Color.White)
+                        )
+                    }
+                }
+            }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Redesigned Welcoming Banner
             Text(
-                text = if (isLoginMode) "Welcome to Harmonic" else "Create Account",
+                text = if (isLoginMode) "Welcome Back" else "Create Account",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color.White,
+                color = textPrimaryColor,
                 textAlign = TextAlign.Center
             )
 
+            Spacer(modifier = Modifier.height(6.dp))
+
             Text(
-                text = if (isLoginMode) "Log in to sync your smart playlist mixes across devices" else "Register an profile to start curated streaming offline",
+                text = if (isLoginMode) 
+                    "Log in to sync your smart mixes and play offline" 
+                else 
+                    "Join to craft personalized AI-curated radio playlists",
                 fontSize = 13.sp,
-                color = Color.White.copy(alpha = 0.7f),
+                color = textSecondaryColor,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.weight(0.3f))
 
-            // Beautiful input card layout with micro-glassmorphism styling
+            // Premium input console with soft border edge depth
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .border(
+                        width = 1.dp,
+                        color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                        shape = RoundedCornerShape(28.dp)
+                    )
                     .testTag("auth_input_card"),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.10f))
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = surfaceContainerColor),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
+                    modifier = Modifier.padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     
-                    if (!isLoginMode) {
-                        // Username box
+                    // Display Name Box - Animated Reveal during Register mode
+                    AnimatedVisibility(
+                        visible = !isLoginMode,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
                         OutlinedTextField(
                             value = usernameInput,
                             onValueChange = { 
                                 usernameInput = it
                                 errorMessage = null
                             },
-                            label = { Text("Display Name", color = Color.White.copy(alpha = 0.7f)) },
-                            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color.White) },
+                            placeholder = { Text("Display Username", color = textSecondaryColor) },
+                            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = accentColor) },
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedBorderColor = Color.White,
-                                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
-                                focusedContainerColor = Color.White.copy(alpha = 0.05f),
-                                unfocusedContainerColor = Color.Transparent
+                                focusedTextColor = textPrimaryColor,
+                                unfocusedTextColor = textPrimaryColor,
+                                focusedBorderColor = accentColor,
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedContainerColor = inputBgColor,
+                                unfocusedContainerColor = inputBgColor
                             ),
+                            shape = RoundedCornerShape(16.dp),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Next
@@ -170,17 +235,18 @@ fun AuthScreen(
                             emailInput = it
                             errorMessage = null
                         },
-                        label = { Text("Email Address", color = Color.White.copy(alpha = 0.7f)) },
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color.White) },
+                        placeholder = { Text("Email Address", color = textSecondaryColor) },
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = accentColor) },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedBorderColor = Color.White,
-                            unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
-                            focusedContainerColor = Color.White.copy(alpha = 0.05f),
-                            unfocusedContainerColor = Color.Transparent
+                            focusedTextColor = textPrimaryColor,
+                            unfocusedTextColor = textPrimaryColor,
+                            focusedBorderColor = accentColor,
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedContainerColor = inputBgColor,
+                            unfocusedContainerColor = inputBgColor
                         ),
+                        shape = RoundedCornerShape(16.dp),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
@@ -197,55 +263,59 @@ fun AuthScreen(
                             passwordInput = it
                             errorMessage = null
                         },
-                        label = { Text("Security Password", color = Color.White.copy(alpha = 0.7f)) },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color.White) },
+                        placeholder = { Text("Enter Password", color = textSecondaryColor) },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = accentColor) },
                         singleLine = true,
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
-                            val logoText = if (passwordVisible) "🙈" else "👁️"
-                            Box(
-                                modifier = Modifier
-                                    .clickable { passwordVisible = !passwordVisible }
-                                    .padding(8.dp)
-                            ) {
-                                Text(logoText, fontSize = 16.sp)
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Text(if (passwordVisible) "🙈" else "👁️", fontSize = 16.sp)
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedBorderColor = Color.White,
-                            unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
-                            focusedContainerColor = Color.White.copy(alpha = 0.05f),
-                            unfocusedContainerColor = Color.Transparent
+                            focusedTextColor = textPrimaryColor,
+                            unfocusedTextColor = textPrimaryColor,
+                            focusedBorderColor = accentColor,
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedContainerColor = inputBgColor,
+                            unfocusedContainerColor = inputBgColor
                         ),
+                        shape = RoundedCornerShape(16.dp),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
                         ),
+                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("auth_password_field")
                     )
 
-                    // Real-time error reports validation
-                    errorMessage?.let { error ->
-                        Text(
-                            text = error,
-                            color = Color(0xFFFF4963),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                    // Dynamic error reports
+                    AnimatedVisibility(
+                        visible = errorMessage != null,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        errorMessage?.let { error ->
+                            Text(
+                                text = error,
+                                color = MaterialTheme.colorScheme.error,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
 
-                    // Large Submit Action Button
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Solid Core Submit Button
                     Button(
                         onClick = {
                             focusManager.clearFocus()
                             
-                            // Client-side validation checks
                             if (emailInput.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
                                 errorMessage = "Please enter a valid email address."
                                 return@Button
@@ -255,18 +325,17 @@ fun AuthScreen(
                                 return@Button
                             }
                             if (!isLoginMode && usernameInput.isBlank()) {
-                                errorMessage = "Please enter your Display Name."
+                                errorMessage = "Please enter your Username."
                                 return@Button
                             }
 
-                            // Start functional auth response simulation
                             coroutineScope.launch {
                                 isSubmitting = true
-                                delay(1200) // Aesthetic network latency simulation
+                                delay(1200) // Beautiful network latency simulation
                                 isSubmitting = false
                                 
                                 val resolvedUsername = if (isLoginMode) {
-                                    emailInput.substringBefore("@").replaceFirstChar { it.uppercase() }
+                                    emailInput.substringBefore("@").replaceFirstChar { it.lowercase() }
                                 } else {
                                     usernameInput
                                 }
@@ -278,19 +347,19 @@ fun AuthScreen(
                         enabled = !isSubmitting,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(52.dp)
                             .testTag("auth_submit_button"),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color(0xFF1F1C2C)
+                            containerColor = accentColor,
+                            contentColor = Color.White
                         )
                     ) {
                         if (isSubmitting) {
                             CircularProgressIndicator(
-                                color = Color(0xFF1F1C2C),
+                                color = Color.White,
                                 modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
+                                strokeWidth = 2.5.dp
                             )
                         } else {
                             Text(
@@ -305,20 +374,33 @@ fun AuthScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Text toggle to switch between flows
-            Text(
-                text = if (isLoginMode) "Don't have an account? Sign Up" else "Already have an account? Log In",
-                color = Color.White,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
+            // Redesigned interactive switcher to toggle between flows with subtle feedback lines
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
+                    .clip(CircleShape)
                     .clickable {
                         isLoginMode = !isLoginMode
                         errorMessage = null
                     }
-                    .padding(8.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .testTag("auth_toggle_mode")
-            )
+            ) {
+                Text(
+                    text = if (isLoginMode) "Don't have an account? " else "Already have an account? ",
+                    color = textSecondaryColor,
+                    fontSize = 13.sp
+                )
+                Text(
+                    text = if (isLoginMode) "Sign Up" else "Log In",
+                    color = accentColor,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(0.4f))
         }
     }
 }

@@ -42,6 +42,7 @@ fun RadioScreen(
 ) {
     val radioStations by viewModel.radioStations.collectAsState()
     val isSearchingRadio by viewModel.isSearchingRadio.collectAsState()
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
     
     var searchQuery by remember { mutableStateOf("") }
     var countryInput by remember { mutableStateOf("") }
@@ -52,6 +53,8 @@ fun RadioScreen(
     
     val focusManager = LocalFocusManager.current
     val accentColor = safeColorParse(selectedAccentColor)
+    val adaptiveBgColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFFEF7FF)
+    val adaptiveContainerBgColor = if (isDarkMode) Color(0xFF1C1B1F) else Color(0xFFF3EDF7)
 
     // Triggers initial fetch of top radio stations
     LaunchedEffect(Unit) {
@@ -75,7 +78,7 @@ fun RadioScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFEF7FF))
+            .background(adaptiveBgColor)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -85,7 +88,7 @@ fun RadioScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF3EDF7)),
+            colors = CardDefaults.cardColors(containerColor = adaptiveContainerBgColor),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(
@@ -216,8 +219,8 @@ fun RadioScreen(
                 val code = pair.first
                 val fullName = pair.second
                 val isSelected = (fullName == countryInput) || (code == "All" && countryInput.isEmpty())
-                val itemBg = if (isSelected) accentColor else Color(0xFFF3EDF7)
-                val itemText = if (isSelected) Color.White else Color(0xFF49454F)
+                val itemBg = if (isSelected) accentColor else adaptiveContainerBgColor
+                val itemText = if (isSelected) Color.White else if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
 
                 Box(
                     modifier = Modifier
@@ -366,7 +369,7 @@ fun RadioScreen(
                                 modifier = Modifier
                                     .size(56.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFF3EDF7)),
+                                    .background(adaptiveContainerBgColor),
                                 contentAlignment = Alignment.Center
                             ) {
                                 AsyncImage(
@@ -484,7 +487,7 @@ fun RadioScreen(
                                     modifier = Modifier
                                         .size(36.dp)
                                         .background(
-                                            if (isCurrentRadioPlaying) accentColor else Color(0xFFF3EDF7),
+                                            if (isCurrentRadioPlaying) accentColor else adaptiveContainerBgColor,
                                             CircleShape
                                         ),
                                     contentAlignment = Alignment.Center
