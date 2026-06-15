@@ -3,6 +3,18 @@
 <img width="1200" height="475" alt="GHBanner" src="images/scc2.jpeg" />
  
 </div>
+<style>
+  .image-container {
+    display: flex;            /* Activates flexbox layout */
+    justify-content: center;   /* Centers images horizontally on the page */
+    gap: 20px;                /* Creates a 20px space between the images */
+  }
+
+  .image-container img {
+    width: 45%;               /* Ensures images scale nicely side-by-side */
+    height: auto;             /* Keeps the original image proportions */
+  }
+</style>
 
 # well tired of ads from other streaming platforms?
 # Try harmonic an open source streaming platform that lets yo stream music from any platform without ads
