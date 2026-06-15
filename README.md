@@ -1,37 +1,15 @@
 <div align="center">
 
-<h1>
-  🎵 H A R M O N I C
-</h1>
+```text
+██╗  ██╗ █████╗ ██████╗ ███╗   ███╗ ██████╗ ███╗   ██╗██╗ ██████╗
+██║  ██║██╔══██╗██╔══██╗████╗ ████║██╔═══██╗████╗  ██║██║██╔════╝
+███████║███████║██████╔╝██╔████╔██║██║   ██║██╔██╗ ██║██║██║     
+██╔══██║██╔══██║██╔══██╗██║╚██╔╝██║██║   ██║██║╚██╗██║██║██║     
+██║  ██║██║  ██║██║  ██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║██║╚██████╗
+╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝ ╚═════╝
+```
 
-<p>
-  <img src="https://readme-typing-svg.demolab.com?font=Poppins&size=24&pause=1000&color=7C3AED&center=true&vCenter=true&width=700&lines=Modern+Open-Source+Music+Streaming+Platform;Stream+Your+Favorite+Music;Create+Playlists+and+Discover+New+Artists;Built+for+Music+Lovers+and+Developers" alt="Typing SVG" />
-</p>
-
-<p>
-  <a href="https://github.com/AAB-I-XES/HARMONIC">
-    <img src="https://img.shields.io/github/stars/AAB-I-XES/HARMONIC?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/AAB-I-XES/HARMONIC/fork">
-    <img src="https://img.shields.io/github/forks/AAB-I-XES/HARMONIC?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/AAB-I-XES/HARMONIC/issues">
-    <img src="https://img.shields.io/github/issues/AAB-I-XES/HARMONIC?style=for-the-badge" />
-  </a>
-</p>
-
-<pre>
-
-🎵 ▂▃▄▅▆▇█▇▆▅▄▃▂ 🎵
-      NOW PLAYING
-     H A R M O N I C
-🎵 ▂▃▄▅▆▇█▇▆▅▄▃▂ 🎵
-
-</pre>
-
-<h3>
-  Feel the Rhythm. Stream in Harmony.
-</h3>
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&pause=1000&color=8B5CF6&center=true&width=800&lines=Open+Source+Music+Streaming;Beautiful+UI+%E2%80%A2+Fast+Performance;Your+Music+Your+Way" />
 
 </div>
 
