@@ -1,8 +1,10 @@
-<div align="center">
-<img width="500" height="1000" alt="screenshots" src="images/scc1.jpeg" />
  
  # well tired of ads from other streaming platforms?
 # Try harmonic an open source streaming platform that lets yo stream music from any platform without ads
+
+<div align="center">
+<img width="500" height="1000" alt="screenshots" src="images/scc1.jpeg" />
+
 
 Harmonic 🎵
 
