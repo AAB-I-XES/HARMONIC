@@ -1,6 +1,6 @@
 <div align="center">
-<img width="500" height="700" alt="screenshots" src="images/scc1.jpeg" />
-<img width="500" height="700" alt="screenshots" src="images/scc2.jpeg" />
+<img width="500" height="1000" alt="screenshots" src="images/scc1.jpeg" />
+<img width="500" height="1000" alt="screenshots" src="images/scc2.jpeg" />
  
 </div>
 <style>
