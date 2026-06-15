@@ -309,6 +309,169 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // ======================== RADIO STREAMING CONFIGURATION ========================
+    private val _radioStations = MutableStateFlow<List<RadioStation>>(emptyList())
+    val radioStations: StateFlow<List<RadioStation>> = _radioStations.asStateFlow()
+
+    private val _isSearchingRadio = MutableStateFlow(false)
+    val isSearchingRadio: StateFlow<Boolean> = _isSearchingRadio.asStateFlow()
+
+    private val _radioSearchQuery = MutableStateFlow("")
+    val radioSearchQuery: StateFlow<String> = _radioSearchQuery.asStateFlow()
+
+    private val _radioSelectedCountry = MutableStateFlow("")
+    val radioSelectedCountry: StateFlow<String> = _radioSelectedCountry.asStateFlow()
+
+    private val _radioSelectedState = MutableStateFlow("")
+    val radioSelectedState: StateFlow<String> = _radioSelectedState.asStateFlow()
+
+    private val curatedFallbackRadioStations = listOf(
+        RadioStation(
+            stationuuid = "fallback_jazz",
+            name = "Jazz24 (Seattle)",
+            url = "https://live.jazz24.org/jazz24-mp3",
+            url_resolved = "https://live.jazz24.org/jazz24-mp3",
+            favicon = "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=300&q=80",
+            tags = "jazz, smooth jazz, classic",
+            country = "United States",
+            state = "Washington",
+            votes = 2400,
+            clickcount = 8900
+        ),
+        RadioStation(
+            stationuuid = "fallback_kexp",
+            name = "KEXP 90.3 FM",
+            url = "https://kexp-mp3-128.streamguys1.com/kexp128.mp3",
+            url_resolved = "https://kexp-mp3-128.streamguys1.com/kexp128.mp3",
+            favicon = "https://images.unsplash.com/photo-1487180142328-0c4e37023af5?w=300&q=80",
+            tags = "alternative, rock, indie",
+            country = "United States",
+            state = "Washington",
+            votes = 1950,
+            clickcount = 7200
+        ),
+        RadioStation(
+            stationuuid = "fallback_lofi",
+            name = "Lofi & Study Beats",
+            url = "https://stream.zeno.fm/0rcshz6bvd0hv",
+            url_resolved = "https://stream.zeno.fm/0rcshz6bvd0hv",
+            favicon = "https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=300&q=80",
+            tags = "lofi, chillhop, study",
+            country = "France",
+            state = "Paris",
+            votes = 1850,
+            clickcount = 6520
+        ),
+        RadioStation(
+            stationuuid = "fallback_dance",
+            name = "Ibiza Global Radio",
+            url = "https://ibizaglobalradio.live-streams.nl:8000/live",
+            url_resolved = "https://ibizaglobalradio.live-streams.nl:8000/live",
+            favicon = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&q=80",
+            tags = "dance, electronic, house",
+            country = "Spain",
+            state = "Ibiza",
+            votes = 3200,
+            clickcount = 11200
+        ),
+        RadioStation(
+            stationuuid = "fallback_bollywood",
+            name = "Bollywood Non-Stop Hits",
+            url = "https://stream.zeno.fm/f9u6t1v7u0hvv",
+            url_resolved = "https://stream.zeno.fm/f9u6t1v7u0hvv",
+            favicon = "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&q=80",
+            tags = "bollywood, hindi, pop",
+            country = "India",
+            state = "Maharashtra",
+            votes = 1450,
+            clickcount = 5600
+        ),
+        RadioStation(
+            stationuuid = "fallback_news",
+            name = "WNYC Public FM 93.9",
+            url = "https://fm939.wnyc.org/wnycfm-web.aac",
+            url_resolved = "https://fm939.wnyc.org/wnycfm-web.aac",
+            favicon = "https://images.unsplash.com/photo-1585699324551-f6c309eed262?w=300&q=80",
+            tags = "news, talk, culture",
+            country = "United States",
+            state = "New York",
+            votes = 1100,
+            clickcount = 4300
+        )
+    )
+
+    fun updateRadioFilters(query: String, country: String, state: String) {
+        _radioSearchQuery.value = query
+        _radioSelectedCountry.value = country
+        _radioSelectedState.value = state
+        fetchRadioStations(query, country, state)
+    }
+
+    fun fetchRadioStations(query: String? = null, country: String? = null, state: String? = null) {
+        viewModelScope.launch {
+            _isSearchingRadio.value = true
+            try {
+                if (isNetworkAvailable()) {
+                    val qName = if (query.isNullOrBlank()) null else query.trim()
+                    val qCountry = if (country.isNullOrBlank() || country == "All Countries") null else country.trim()
+                    val qState = if (state.isNullOrBlank() || state == "All States") null else state.trim()
+
+                    val list = if (qName == null && qCountry == null && qState == null) {
+                        try {
+                            RetrofitRadioClient.service.getTopStations()
+                        } catch (e: Exception) {
+                            RetrofitRadioClient.service.searchStations(limit = 40)
+                        }
+                    } else {
+                        RetrofitRadioClient.service.searchStations(
+                            name = qName,
+                            country = qCountry,
+                            state = qState
+                        )
+                    }
+
+                    if (list.isNotEmpty()) {
+                        _radioStations.value = list
+                    } else {
+                        // If API worked but returned empty list, filter fallbacks as a smart mock alternative!
+                        filterCuratedFallbackRadioStations(qName, qCountry, qState)
+                    }
+                } else {
+                    filterCuratedFallbackRadioStations(query, country, state)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Radio API error: ${e.message}. Using high-quality curated fallbacks.")
+                filterCuratedFallbackRadioStations(query, country, state)
+            } finally {
+                _isSearchingRadio.value = false
+            }
+        }
+    }
+
+    private fun filterCuratedFallbackRadioStations(query: String?, country: String?, state: String?) {
+        val qName = query?.trim()
+        val qCountry = if (country == "All Countries" || country == "") null else country?.trim()
+        val qState = if (state == "All States" || state == "") null else state?.trim()
+
+        var filtered = curatedFallbackRadioStations
+        if (!qName.isNullOrEmpty()) {
+            filtered = filtered.filter { it.name.contains(qName, ignoreCase = true) || (it.tags?.contains(qName, ignoreCase = true) ?: false) }
+        }
+        if (!qCountry.isNullOrEmpty()) {
+            filtered = filtered.filter { it.country?.equals(qCountry, ignoreCase = true) == true }
+        }
+        if (!qState.isNullOrEmpty()) {
+            filtered = filtered.filter { it.state?.equals(qState, ignoreCase = true) == true }
+        }
+        _radioStations.value = filtered
+    }
+
+    fun playRadioStation(station: RadioStation) {
+        val track = station.toTrackEntity()
+        // Play the stream directly using our AudioPlayer
+        audioPlayer.playTrack(track, listOf(track))
+    }
+
     override fun onCleared() {
         super.onCleared()
         audioPlayer.release()

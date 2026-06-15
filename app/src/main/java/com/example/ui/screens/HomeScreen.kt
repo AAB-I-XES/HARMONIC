@@ -139,62 +139,65 @@ fun HomeScreen(
 
     val isOnline = viewModel.isNetworkAvailable()
 
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFEF7FF)), // High Density Light BG
-        contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp, start = 16.dp, end = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            .background(Color(0xFFFEF7FF))
     ) {
         // High-fidelity App Header and nav row selector
-        item {
-            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(36.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Navigation pills: All, Music, Radio
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(36.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Navigation pills: All, Music, Radio
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        listOf("All", "Music", "Radio").forEach { nav ->
-                            val isSelected = selectedHeaderNav == nav
-                            val activeColor = safeColorParse(selectedAccentColor)
-                            Box(
-                                modifier = Modifier
-                                    .height(36.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isSelected) activeColor else Color(0xFFF3EDF7))
-                                    .clickable { selectedHeaderNav = nav }
-                                    .padding(horizontal = 16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = nav,
-                                    color = if (isSelected) Color.White else Color(0xFF49454F),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                    listOf("All", "Music", "Radio").forEach { nav ->
+                        val isSelected = selectedHeaderNav == nav
+                        val activeColor = safeColorParse(selectedAccentColor)
+                        Box(
+                            modifier = Modifier
+                                .height(36.dp)
+                                .clip(CircleShape)
+                                .background(if (isSelected) activeColor else Color(0xFFF3EDF7))
+                                .clickable { selectedHeaderNav = nav }
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = nav,
+                                color = if (isSelected) Color.White else Color(0xFF49454F),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
-
-                    // Profile picture icon on the right corner
-                    AsyncImage(
-                        model = currentUser?.avatarUrl ?: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80",
-                        contentDescription = "Profile Picture",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .clickable { onAuthClick() }
-                            .testTag("profile_picture_icon")
-                    )
                 }
 
-                // Apple Music styled segmented tab selector
+                // Profile picture icon on the right corner
+                AsyncImage(
+                    model = currentUser?.avatarUrl ?: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80",
+                    contentDescription = "Profile Picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .clickable { onAuthClick() }
+                        .testTag("profile_picture_icon")
+                )
+            }
+
+            // Apple Music styled segmented tab selector
+            if (selectedHeaderNav == "All") {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -231,6 +234,33 @@ fun HomeScreen(
                 }
             }
         }
+
+        // View dynamic switcher container based on Selected header pill
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            when (selectedHeaderNav) {
+                "Music" -> {
+                    MusicCurationScreen(
+                        viewModel = viewModel,
+                        selectedAccentColor = selectedAccentColor,
+                        onTrackPlay = { track -> viewModel.playTrack(track, trendingTracks) }
+                    )
+                }
+                "Radio" -> {
+                    RadioScreen(
+                        viewModel = viewModel,
+                        selectedAccentColor = selectedAccentColor
+                    )
+                }
+                else -> { // "All"
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 120.dp, start = 16.dp, end = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
 
         // ======================== TAB RENDERING ========================
 
@@ -922,6 +952,10 @@ fun HomeScreen(
                                 )
                             )
                         }
+                    }
+                }
+            }
+        }
                     }
                 }
             }
