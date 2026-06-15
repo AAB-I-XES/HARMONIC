@@ -1,0 +1,6 @@
+{
+  "name": "Harmonic",
+  "description": "A gorgeous, offline-first music streaming application blending Apple Music glassmorphism with Spotify-like smart personalized curation and local SQLite offline caching.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
