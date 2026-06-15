@@ -97,13 +97,7 @@ npm run dev
 
 ---
 
-# 📊 Project Activity
 
-<div align="center">
-
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=AAB-I-XES&theme=tokyo-night&hide_border=true"/>
-
-</div>
 
 ---
 
