@@ -3,7 +3,7 @@
 </div>
 
 # well tired of ads from other streaming platforms?
-# Try harmonic anopen source streaming platform that lets yo stream music from any platform without ads
+# Try harmonic an open source streaming platform that lets yo stream music from any platform without ads
 
 Harmonic 🎵
 
@@ -11,18 +11,18 @@ Harmonic is a modern, open-source music streaming application designed to delive
 
 Whether you're a developer looking to contribute or a music enthusiast exploring open-source alternatives, Harmonic aims to provide a powerful and customizable music platform for everyone.
 
-✨ Features
-🎶 High-quality music streaming
-🔍 Fast song, album, and artist search
-📂 Playlist creation and management
-❤️ Favorite and save tracks
-🎨 Modern and responsive UI
-🌙 Light and dark mode support
-📱 Cross-platform compatibility
-⚡ Fast loading and optimized performance
-🔄 Real-time playback controls
-📈 Scalable architecture for future expansion
-🚀 Vision
+-> Features
+-> High-quality music streaming
+-> Fast song, album, and artist search
+-> Playlist creation and management
+-> Favorite and save tracks
+-> Modern and responsive UI
+-> Light and dark mode support
+-> Cross-platform compatibility
+-> Fast loading and optimized performance
+-> Real-time playback controls
+-> Scalable architecture for future expansion
+-> Vision
 
 Harmonic is built around the idea that music should be accessible, beautiful, and community-driven. The project focuses on:
 
@@ -40,21 +40,23 @@ Backend: Node.js / Express / Go / Rust (customize as needed)
 Database: PostgreSQL / MongoDB
 Authentication: JWT / OAuth
 Storage & Streaming: Cloud Storage / CDN
-📦 Installation
-# Clone the repository
-git clone https://github.com/your-username/harmonic.git
 
-# Navigate into the project
-cd harmonic
+📦 Installation
+
+##
+# Clone the repository
+git clone https://github.com/AAB-I-XES/HARMONIC.git
+
+# Navigate to the project
+cd HARMONIC
 
 # Install dependencies
 npm install
 
 # Start development server
 npm run dev
-🤝 Contributing
 
-Contributions are welcome and appreciated.
+>>Contributions are welcome and appreciated.
 
 Fork the repository
 Create a feature branch
