@@ -4,15 +4,17 @@
  
 </div>
 <style>
-  .image-container {
-    display: flex;            /* Activates flexbox layout */
-    justify-content: center;   /* Centers images horizontally on the page */
-    gap: 20px;                /* Creates a 20px space between the images */
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Splits the row into 2 equal columns */
+    gap: 10px;                             /* Space between grid items */
+    max-width: 800px;                      /* Restricts max width of the layout */
+    margin: 0 auto;                        /* Centers the entire grid on screen */
   }
 
-  .image-container img {
-    width: 45%;               /* Ensures images scale nicely side-by-side */
-    height: auto;             /* Keeps the original image proportions */
+  .image-grid img {
+    width: 100%;
+    height: auto;
   }
 </style>
 
