@@ -1,13 +1,11 @@
 <div align="center">
 
-<img src="https://github.com/AAB-I-XES/HARMONIC/assets/banner.png" alt="Harmonic Banner" width="100%" />
-
-# 🎵 Harmonic
-
-### Modern Open-Source Music Streaming Platform
+<h1>
+  🎵 H A R M O N I C
+</h1>
 
 <p>
-  Stream, discover, and enjoy music through a beautiful, fast, and modern streaming experience.
+  <img src="https://readme-typing-svg.demolab.com?font=Poppins&size=24&pause=1000&color=7C3AED&center=true&vCenter=true&width=700&lines=Modern+Open-Source+Music+Streaming+Platform;Stream+Your+Favorite+Music;Create+Playlists+and+Discover+New+Artists;Built+for+Music+Lovers+and+Developers" alt="Typing SVG" />
 </p>
 
 <p>
@@ -22,9 +20,18 @@
   </a>
 </p>
 
-<a href="https://github.com/AAB-I-XES/HARMONIC">
-  View Repository
-</a>
+<pre>
+
+🎵 ▂▃▄▅▆▇█▇▆▅▄▃▂ 🎵
+      NOW PLAYING
+     H A R M O N I C
+🎵 ▂▃▄▅▆▇█▇▆▅▄▃▂ 🎵
+
+</pre>
+
+<h3>
+  Feel the Rhythm. Stream in Harmony.
+</h3>
 
 </div>
 
