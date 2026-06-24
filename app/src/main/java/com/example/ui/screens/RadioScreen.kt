@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,6 +76,10 @@ fun RadioScreen(
         "CA" to "Canada"
     )
 
+    val textPrimary = if (isDarkMode) Color.White else Color(0xFF1D1B20)
+    val textSecondary = if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
+    val inputBg = if (isDarkMode) Color(0xFF121212) else Color.White
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -86,7 +91,12 @@ fun RadioScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .border(
+                    width = 1.dp,
+                    color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                    shape = RoundedCornerShape(16.dp)
+                ),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = adaptiveContainerBgColor),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -107,12 +117,15 @@ fun RadioScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search by name or keyword...", fontSize = 13.sp) },
-                    prefix = { Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color(0xFF49454F)) },
+                    placeholder = { Text("Search by name or keyword...", fontSize = 13.sp, color = textSecondary) },
+                    prefix = { Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(16.dp), tint = textSecondary) },
                     colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textPrimary,
+                        unfocusedTextColor = textPrimary,
                         focusedBorderColor = accentColor,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedBorderColor = if (isDarkMode) Color.White.copy(alpha = 0.15f) else Color.Gray.copy(alpha = 0.3f),
+                        unfocusedContainerColor = inputBg,
+                        focusedContainerColor = inputBg
                     ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -132,11 +145,14 @@ fun RadioScreen(
                     OutlinedTextField(
                         value = countryInput,
                         onValueChange = { countryInput = it },
-                        placeholder = { Text("Country (e.g., India)", fontSize = 12.sp) },
+                        placeholder = { Text("Country (e.g., India)", fontSize = 12.sp, color = textSecondary) },
                         colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = textPrimary,
+                            unfocusedTextColor = textPrimary,
                             focusedBorderColor = accentColor,
-                            unfocusedContainerColor = Color.White,
-                            focusedContainerColor = Color.White
+                            unfocusedBorderColor = if (isDarkMode) Color.White.copy(alpha = 0.15f) else Color.Gray.copy(alpha = 0.3f),
+                            unfocusedContainerColor = inputBg,
+                            focusedContainerColor = inputBg
                         ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(50.dp),
@@ -151,11 +167,14 @@ fun RadioScreen(
                     OutlinedTextField(
                         value = stateInput,
                         onValueChange = { stateInput = it },
-                        placeholder = { Text("State (e.g., California)", fontSize = 12.sp) },
+                        placeholder = { Text("State (e.g., California)", fontSize = 12.sp, color = textSecondary) },
                         colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = textPrimary,
+                            unfocusedTextColor = textPrimary,
                             focusedBorderColor = accentColor,
-                            unfocusedContainerColor = Color.White,
-                            focusedContainerColor = Color.White
+                            unfocusedBorderColor = if (isDarkMode) Color.White.copy(alpha = 0.15f) else Color.Gray.copy(alpha = 0.3f),
+                            unfocusedContainerColor = inputBg,
+                            focusedContainerColor = inputBg
                         ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(50.dp),
@@ -183,7 +202,7 @@ fun RadioScreen(
                             focusManager.clearFocus()
                         },
                         shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF49454F)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = textSecondary),
                         modifier = Modifier.weight(1f).height(38.dp)
                     ) {
                         Text("Reset Filters", fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -270,7 +289,7 @@ fun RadioScreen(
                 text = if (countryInput.isNotBlank()) "Stations in $countryInput" else "Popular Channels",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Black,
-                color = Color(0xFF1D1B20)
+                color = textPrimary
             )
 
             if (isSearchingRadio) {
@@ -283,7 +302,7 @@ fun RadioScreen(
                 Text(
                     text = "${radioStations.size} found",
                     fontSize = 11.sp,
-                    color = Color(0xFF49454F)
+                    color = textSecondary
                 )
             }
         }
@@ -306,21 +325,22 @@ fun RadioScreen(
                     Icon(
                         imageVector = Icons.Default.Warning, // WiFi offline style fallback
                         contentDescription = null,
-                        tint = Color(0xFFCAC4D0),
+                        tint = if (isDarkMode) Color.White.copy(alpha = 0.3f) else Color(0xFFCAC4D0),
                         modifier = Modifier.size(48.dp)
                     )
                     Text(
                         text = "No Stations Found",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1D1B20)
+                        color = textPrimary
                     )
                     Text(
                         text = "Try clearing filters, searching different states or checking connection.",
                         fontSize = 12.sp,
-                        color = Color(0xFF49454F),
+                        color = textSecondary,
                         maxLines = 2,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -339,8 +359,8 @@ fun RadioScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .border(
-                                width = if (isCurrentRadioPlaying) 2.dp else 0.dp,
-                                color = if (isCurrentRadioPlaying) accentColor else Color.Transparent,
+                                width = if (isCurrentRadioPlaying) 2.dp else 1.dp,
+                                color = if (isCurrentRadioPlaying) accentColor else if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
                                 shape = RoundedCornerShape(16.dp)
                             )
                             .clip(RoundedCornerShape(16.dp))
@@ -350,9 +370,9 @@ fun RadioScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = if (isCurrentRadioPlaying) {
-                                accentColor.copy(alpha = 0.08f)
+                                accentColor.copy(alpha = if (isDarkMode) 0.15f else 0.08f)
                             } else {
-                                Color.White
+                                if (isDarkMode) Color(0xFF1C1B1F) else Color.White
                             }
                         ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
@@ -409,7 +429,7 @@ fun RadioScreen(
                                         text = station.name,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1D1B20),
+                                        color = textPrimary,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.weight(1f, fill = false)
@@ -439,7 +459,7 @@ fun RadioScreen(
                                     Icon(
                                         imageVector = Icons.Default.Place,
                                         contentDescription = null,
-                                        tint = Color(0xFF49454F),
+                                        tint = textSecondary,
                                         modifier = Modifier.size(12.dp)
                                     )
                                     Text(
@@ -454,7 +474,7 @@ fun RadioScreen(
                                             if (isEmpty()) append("International Feed")
                                         },
                                         fontSize = 11.sp,
-                                        color = Color(0xFF49454F),
+                                        color = textSecondary,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
@@ -505,7 +525,7 @@ fun RadioScreen(
                                         Icon(
                                             imageVector = Icons.Default.PlayArrow,
                                             contentDescription = "Stream",
-                                            tint = if (isCurrentRadioPlaying) Color.White else Color(0xFF1D1B20),
+                                            tint = if (isCurrentRadioPlaying) Color.White else textPrimary,
                                             modifier = Modifier.size(18.dp)
                                         )
                                     }

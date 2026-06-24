@@ -38,17 +38,26 @@ fun PlaylistScreen(
 ) {
     val activePlaylist by viewModel.activePlaylist.collectAsState()
     val playlistTracks by viewModel.activePlaylistTracks.collectAsState()
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
 
     val currentPlaylist = activePlaylist ?: return
 
-    val dynamicBrush = remember(currentPlaylist.accentColor) {
+    val textPrimary = if (isDarkMode) Color.White else Color(0xFF1D1B20)
+    val textSecondary = if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
+    val containerBg = if (isDarkMode) Color(0xFF1C1B1F) else Color(0xFFF3EDF7)
+    val baseAppBg = if (isDarkMode) Color(0xFF121212) else Color(0xFFFEF7FF)
+
+    val dynamicBrush = remember(currentPlaylist.accentColor, isDarkMode) {
         val baseColor = try {
             Color(android.graphics.Color.parseColor(currentPlaylist.accentColor ?: "#6750A4"))
         } catch (e: Exception) {
             Color(0xFF6750A4)
         }
         Brush.verticalGradient(
-            colors = listOf(baseColor.copy(alpha = 0.35f), Color(0xFFFEF7FF)) // light theme blend
+            colors = listOf(
+                baseColor.copy(alpha = if (isDarkMode) 0.15f else 0.35f),
+                baseAppBg
+            )
         )
     }
 
@@ -58,7 +67,7 @@ fun PlaylistScreen(
                 title = { Text("Playlist", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF1D1B20))
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = textPrimary)
                     }
                 },
                 actions = {
@@ -70,16 +79,16 @@ fun PlaylistScreen(
                         },
                         modifier = Modifier.testTag("delete_playlist_button")
                     ) {
-                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Playlist", tint = Color(0xFF49454F))
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Playlist", tint = textSecondary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
-                    titleContentColor = Color(0xFF1D1B20)
+                    titleContentColor = textPrimary
                 )
             )
         },
-        containerColor = Color(0xFFFEF7FF),
+        containerColor = baseAppBg,
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         LazyColumn(
@@ -116,7 +125,7 @@ fun PlaylistScreen(
                         text = currentPlaylist.name,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = Color(0xFF1D1B20),
+                        color = textPrimary,
                         textAlign = TextAlign.Center
                     )
 
@@ -124,7 +133,7 @@ fun PlaylistScreen(
                         Text(
                             text = currentPlaylist.description,
                             fontSize = 12.sp,
-                            color = Color(0xFF49454F),
+                            color = textSecondary,
                             textAlign = TextAlign.Center,
                             lineHeight = 18.sp,
                             modifier = Modifier.padding(horizontal = 24.dp)
@@ -140,9 +149,13 @@ fun PlaylistScreen(
                         },
                         enabled = playlistTracks.isNotEmpty(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF6750A4),
+                            containerColor = try {
+                                Color(android.graphics.Color.parseColor(currentPlaylist.accentColor ?: "#6750A4"))
+                            } catch (e: Exception) {
+                                Color(0xFF6750A4)
+                            },
                             contentColor = Color.White,
-                            disabledContainerColor = Color(0xFFCAC4D0)
+                            disabledContainerColor = if (isDarkMode) Color.White.copy(alpha = 0.12f) else Color(0xFFCAC4D0)
                         ),
                         shape = RoundedCornerShape(24.dp),
                         contentPadding = PaddingValues(horizontal = 32.dp, vertical = 12.dp),
@@ -165,7 +178,7 @@ fun PlaylistScreen(
                     text = "Tracks (${playlistTracks.size})",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1D1B20),
+                    color = textPrimary,
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
@@ -179,11 +192,11 @@ fun PlaylistScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("This playlist has no tracks yet.", color = Color(0xFF49454F))
+                        Text("This playlist has no tracks yet.", color = textSecondary)
                         Text(
                             text = "Tip: Search for songs under 'Online Mode' and tap download or play, they will appear or can be added directly which persists instantly to database.",
                             fontSize = 11.sp,
-                            color = Color(0xFF49454F).copy(alpha = 0.8f),
+                            color = textSecondary,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(horizontal = 32.dp)
                         )
@@ -198,7 +211,7 @@ fun PlaylistScreen(
                             .clickable { viewModel.playTrack(track, playlistTracks) }
                             .testTag("playlist_track_row_${track.id}"),
                         shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF3EDF7))
+                        colors = CardDefaults.cardColors(containerColor = containerBg)
                     ) {
                         Row(
                             modifier = Modifier
@@ -223,14 +236,14 @@ fun PlaylistScreen(
                                     text = track.title,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF1D1B20),
+                                    color = textPrimary,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = track.artistName,
                                     fontSize = 11.sp,
-                                    color = Color(0xFF49454F),
+                                    color = textSecondary,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -244,7 +257,7 @@ fun PlaylistScreen(
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "Remove from playlist",
-                                    tint = Color(0xFF49454F).copy(alpha = 0.5f)
+                                    tint = textSecondary
                                 )
                             }
                         }

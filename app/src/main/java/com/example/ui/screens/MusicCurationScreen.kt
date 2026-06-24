@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +44,10 @@ fun MusicCurationScreen(
     val accentColor = safeColorParse(selectedAccentColor)
     val adaptiveBgColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFFEF7FF)
     var selectedGenre by remember { mutableStateOf("All") }
+    
+    val textPrimary = if (isDarkMode) Color.White else Color(0xFF1D1B20)
+    val textSecondary = if (isDarkMode) Color.White.copy(alpha = 0.6f) else Color(0xFF49454F)
+    val pillContainerBg = if (isDarkMode) Color(0xFF1C1B1F) else Color(0xFFF3EDF7)
 
     val genres = listOf(
         "All" to Icons.Default.List,
@@ -86,7 +91,7 @@ fun MusicCurationScreen(
                     text = "Browse Genres",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF1D1B20),
+                    color = textPrimary,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 
@@ -99,8 +104,8 @@ fun MusicCurationScreen(
                         val genreName = pair.first
                         val icon = pair.second
                         val isSelected = selectedGenre == genreName
-                        val pillBg = if (isSelected) accentColor else Color(0xFFF3EDF7)
-                        val pillText = if (isSelected) Color.White else Color(0xFF49454F)
+                        val pillBg = if (isSelected) accentColor else pillContainerBg
+                        val pillText = if (isSelected) Color.White else textSecondary
 
                         Box(
                             modifier = Modifier
@@ -142,7 +147,7 @@ fun MusicCurationScreen(
                     text = "Featured Releases",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF1D1B20),
+                    color = textPrimary,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
@@ -232,7 +237,7 @@ fun MusicCurationScreen(
                 text = if (selectedGenre == "All") "Listed Tracks" else "$selectedGenre Curations",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF1D1B20),
+                color = textPrimary,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -248,7 +253,7 @@ fun MusicCurationScreen(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No tracks available under this genre", color = Color(0xFF49454F), fontSize = 13.sp)
+                    Text("No tracks available under this genre", color = textSecondary, fontSize = 13.sp)
                 }
             }
         } else {
@@ -257,9 +262,14 @@ fun MusicCurationScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .border(
+                            width = 1.dp,
+                            color = if (isDarkMode) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.04f),
+                            shape = RoundedCornerShape(12.dp)
+                        )
                         .clickable { onTrackPlay(track) },
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = if (isDarkMode) Color(0xFF1C1B1F) else Color.White),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
                 ) {
                     Row(
@@ -283,14 +293,14 @@ fun MusicCurationScreen(
                                 text = track.title,
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1D1B20),
+                                color = textPrimary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = track.artistName,
                                 fontSize = 11.sp,
-                                color = Color(0xFF49454F),
+                                color = textSecondary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
